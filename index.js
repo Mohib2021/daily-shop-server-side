@@ -14,6 +14,18 @@ const client = new MongoClient(uri, {
 	useUnifiedTopology: true,
 });
 
+const run = async () => {
+	try {
+		// connecting with mongodb database
+		await client.connect();
+		const database = client.db("daily-shop");
+		const products = database.collection("products");
+	} finally {
+		// await client.close()
+	}
+};
+run().catch(console.dir());
+
 app.get("/", (req, res) => {
 	res.send("Daily Shop is running");
 });
