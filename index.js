@@ -40,6 +40,24 @@ const run = async () => {
 			const result = await products.findOne(query);
 			res.send(result);
 		});
+
+		// Upload product
+		app.post("/products", async (req, res) => {
+			const product = req.body;
+			const file = req.files;
+			const photoData = file.photo.data;
+			const encodedPhoto = photoData.toString("base64");
+			const photoBuffer = Buffer.from(encodedPhoto, "base64");
+			const newProduct = {
+				title: product.title,
+				img: photoBuffer,
+				price: product.price,
+				desc: product.desc,
+				category: product.category,
+			};
+			const result = await products.insertOne(newProduct);
+			res.json(result);
+		});
 	} finally {
 		// await client.close()
 	}
