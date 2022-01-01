@@ -20,6 +20,14 @@ const run = async () => {
 		await client.connect();
 		const database = client.db("daily-shop");
 		const products = database.collection("products");
+
+		// Get all products
+		app.get("/products", async (req, res) => {
+			const query = products.find({});
+			const result = await query.toArray();
+			console.log("products is calling");
+			res.send(result);
+		});
 	} finally {
 		// await client.close()
 	}
