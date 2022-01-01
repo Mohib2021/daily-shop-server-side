@@ -24,11 +24,12 @@ const run = async () => {
 		// connecting with mongodb database
 		await client.connect();
 		const database = client.db("daily-shop");
-		const products = database.collection("products");
+		const productsCollections = database.collection("products");
+		const usersCollections = database.collection("users");
 
 		// Get all products
 		app.get("/products", async (req, res) => {
-			const query = products.find({});
+			const query = productsCollections.find({});
 			const result = await query.toArray();
 			res.send(result);
 		});
@@ -37,7 +38,7 @@ const run = async () => {
 		app.get("/products/:id", async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: ObjectId(id) };
-			const result = await products.findOne(query);
+			const result = await productsCollections.findOne(query);
 			res.send(result);
 		});
 
@@ -55,8 +56,37 @@ const run = async () => {
 				desc: product.desc,
 				category: product.category,
 			};
-			const result = await products.insertOne(newProduct);
+			const result = await productsCollections.insertOne(newProduct);
 			res.json(result);
+		});
+
+		// Upload User to database
+		app.post("/users", async (req, res) => {
+			const user = req.body;
+			const file = req.files;
+			if (!file) {
+				// if user login with google
+				const query = { email: user.email };
+				const existingUser = usersCollections.findOne(query);
+				if (!existingUser) {
+					const result = usersCollections.insertOne(user);
+					res.json(result);
+				}
+			} else {
+				// if user signUp with form manually
+				const { displayName, email, role } = user;
+				const photoData = file.photo.data;
+				const encodedPhoto = photoData.toString("base64");
+				const photoBuffer = Buffer.from(encodedPhoto, "base64");
+				const newUser = {
+					displayName,
+					email,
+					role,
+					photo: photoBuffer,
+				};
+				const result = usersCollections.insertOne(newUser);
+				res.json(result);
+			}
 		});
 	} finally {
 		// await client.close()
