@@ -25,7 +25,6 @@ const run = async () => {
 		app.get("/products", async (req, res) => {
 			const query = products.find({});
 			const result = await query.toArray();
-			console.log("products is calling");
 			res.send(result);
 		});
 	} finally {
