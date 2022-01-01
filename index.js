@@ -32,8 +32,8 @@ const run = async () => {
 		// Get single product
 		app.get("/products/:id", async (req, res) => {
 			const id = req.params.id;
-			const query = await ObjectId({ _id: id });
-			const result = products.findOne(query);
+			const query = { _id: ObjectId(id) };
+			const result = await products.findOne(query);
 			res.send(result);
 		});
 	} finally {
