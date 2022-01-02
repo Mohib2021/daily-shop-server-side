@@ -68,6 +68,13 @@ const run = async () => {
 			res.json(result);
 		});
 
+		//Get User Collections
+		app.get("/users", async (req, res) => {
+			const cursor = usersCollections.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		});
+
 		// Upload User to database
 		app.post("/users", async (req, res) => {
 			const user = req.body;
