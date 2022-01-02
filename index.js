@@ -26,6 +26,12 @@ const run = async () => {
 		const database = client.db("daily-shop");
 		const productsCollections = database.collection("products");
 		const usersCollections = database.collection("users");
+		const ratingsCollections = database.collection("ratings");
+
+		/* 
+-----------------------------
+products collections starts from here
+-----------------------------*/
 
 		// Get all products
 		app.get("/products", async (req, res) => {
@@ -68,6 +74,11 @@ const run = async () => {
 			res.json(result);
 		});
 
+		/* 
+-----------------------------
+User collections starts from here
+-----------------------------*/
+
 		//Get User Collections
 		app.get("/users", async (req, res) => {
 			const cursor = usersCollections.find({});
@@ -86,7 +97,6 @@ const run = async () => {
 					role: body.role,
 				},
 			};
-			console.log(body);
 			const result = await usersCollections.updateOne(query, updateDoc, option);
 			res.json(result);
 		});
@@ -118,6 +128,18 @@ const run = async () => {
 				const result = usersCollections.insertOne(newUser);
 				res.json(result);
 			}
+		});
+
+		/* 
+-----------------------------
+User collections starts from here
+-----------------------------*/
+
+		//Get rating Collections
+		app.get("/ratings", async (req, res) => {
+			const cursor = ratingsCollections.find({});
+			const result = await cursor.toArray();
+			res.send(result);
 		});
 	} finally {
 		// await client.close()
