@@ -27,7 +27,7 @@ const run = async () => {
 		const productsCollections = database.collection("products");
 		const usersCollections = database.collection("users");
 		const ratingsCollections = database.collection("ratings");
-
+		const ordersCollections = database.collection("orders");
 		/* 
 -----------------------------
 products collections starts from here
@@ -139,6 +139,53 @@ User collections starts from here
 		app.get("/ratings", async (req, res) => {
 			const cursor = ratingsCollections.find({});
 			const result = await cursor.toArray();
+			res.send(result);
+		});
+
+		/* 
+-----------------------------
+User collections starts from here
+-----------------------------*/
+
+		//Get Order Collections
+		app.get("/orders", async (req, res) => {
+			const cursor = ordersCollections.find({});
+			const result = await cursor.toArray();
+			res.send(result);
+		});
+
+		// Post Order to collection
+		app.post("/orders", async (req, res) => {
+			const order = req.body;
+			const result = await ordersCollections.insertOne(order);
+			res.send(result);
+		});
+
+		// Update order status to Shipping
+		app.put("/orders/:id", async (req, res) => {
+			const id = req.params.id;
+			const body = req.body;
+			const query = { _id: ObjectId(id) };
+			const option = { upsert: true };
+			let updateDoc;
+			if (body.status) {
+				updateDoc = {
+					$set: {
+						status: body.status,
+					},
+				};
+			} else {
+				updateDoc = {
+					$set: {
+						payment: body,
+					},
+				};
+			}
+			const result = await ordersCollections.updateOne(
+				query,
+				updateDoc,
+				option
+			);
 			res.send(result);
 		});
 	} finally {
