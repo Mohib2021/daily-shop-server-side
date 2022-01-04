@@ -110,7 +110,7 @@ User collections starts from here
 				const query = { email: user.email };
 				const existingUser = usersCollections.findOne(query);
 				if (!existingUser) {
-					const result = usersCollections.insertOne(user);
+					const result = await usersCollections.insertOne(user);
 					res.json(result);
 				}
 			} else {
@@ -125,7 +125,7 @@ User collections starts from here
 					role,
 					photo: photoBuffer,
 				};
-				const result = usersCollections.insertOne(newUser);
+				const result = await usersCollections.insertOne(newUser);
 				res.json(result);
 			}
 		});
