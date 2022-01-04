@@ -83,6 +83,7 @@ User collections starts from here
 		app.get("/users", async (req, res) => {
 			const cursor = usersCollections.find({});
 			const result = await cursor.toArray();
+			console.log("user collection is hitting");
 			res.send(result);
 		});
 
@@ -103,12 +104,13 @@ User collections starts from here
 
 		// Upload User to database
 		app.post("/users", async (req, res) => {
+			console.log("user post api is hitting");
 			const user = req.body;
 			const file = req.files;
 			if (!file) {
 				// if user login with google
 				const query = { email: user.email };
-				const existingUser = usersCollections.findOne(query);
+				const existingUser = await usersCollections.findOne(query);
 				if (!existingUser) {
 					const result = await usersCollections.insertOne(user);
 					res.json(result);
